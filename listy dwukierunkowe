@@ -132,6 +132,86 @@ namespace listy_dwukierunkowe_3
             }
         }
 
+        public void DodajPrzed(int szukana, int wartosc)
+        {
+            Wezel nowy = new Wezel(wartosc);
+
+            Wezel obecny = head;
+
+            while(obecny != null && obecny.wartosc != szukana)
+            {
+                obecny = obecny.nastepny;
+            }
+            if (obecny == null)
+            {
+                return;
+            }
+            else
+            {
+
+                if (obecny == head)
+                {
+                    nowy.nastepny = head;
+                    head.poprzedni = nowy;
+                    head = nowy;
+                }
+                else
+                {
+                    nowy.nastepny = obecny;
+                    nowy.poprzedni = obecny.poprzedni;
+
+                    obecny.poprzedni.nastepny = nowy;
+                    obecny.poprzedni = nowy;
+                }
+            }
+
+        }
+
+
+        public void DodajPo(int szukana, int wartosc)
+        {
+            Wezel nowy = new Wezel(wartosc);
+
+            Wezel obecny = head;
+
+            while (obecny != null && obecny.wartosc != szukana)
+            {
+                obecny = obecny.nastepny;
+            }
+            if (obecny == null)
+            {
+                return;
+            }
+
+            nowy.poprzedni = obecny;
+            nowy.nastepny = obecny.nastepny;
+
+            if (nowy.nastepny != null)
+            {
+                nowy.nastepny.poprzedni = nowy;
+            }
+
+            obecny.nastepny = nowy;
+                
+        }
+
+
+        public void DodajGlowe(int wartosc)
+        {
+            Wezel nowy = new Wezel(wartosc);
+            if (head != null)
+            {
+                head.poprzedni = nowy;
+                nowy.nastepny = head;
+                head = nowy;
+            }
+            else
+            {
+                head = nowy;
+            }
+
+        }
+
         public void usun(int wartosc)
         {
             Wezel obecny = head;
@@ -181,6 +261,9 @@ namespace listy_dwukierunkowe_3
         }
     }
 }
+
+
+
 
 
 
