@@ -1,0 +1,187 @@
+==========================================================================form 1============================================================
+
+namespace listy_dwukierunkowe_3
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        ListaDwukierunkowa lista = new ListaDwukierunkowa();
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
+
+                lista.dodaj(liczba);
+
+                textBox1.Text = " ";
+
+                OdswiezWidok();
+
+            }
+            catch
+            {
+                MessageBox.Show("Wpisz poprawną liczbę");
+            }
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
+
+                lista.usun(liczba);
+
+                textBox1.Text = " ";
+
+                OdswiezWidok();
+            }
+            catch
+            {
+                MessageBox.Show("wpisz poprawną liczbę");
+            }
+        }
+
+        private void OdswiezWidok()
+        {
+            label2.Text = "Lista: " + lista.pobierzWynik();
+        }
+    }
+}
+
+
+
+====================================================================Wezel==================================================================
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace listy_dwukierunkowe_3
+{
+    public class Wezel
+    {
+        public int wartosc;
+        public Wezel poprzedni;
+        public Wezel nastepny;
+
+        public Wezel(int wartosc)
+        {
+            this.wartosc = wartosc;
+            this.nastepny = null;
+            this.poprzedni = null;
+        }
+    }
+}
+
+
+
+=====================================================================ListaDwukierunkowa========================================================
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace listy_dwukierunkowe_3
+{
+    internal class ListaDwukierunkowa
+    {
+        public Wezel head;
+
+        public ListaDwukierunkowa()
+        {
+            this.head = null;
+        }
+
+
+        public void dodaj(int wartosc)
+        {
+            Wezel nowy = new Wezel(wartosc);
+
+            if (head == null)
+            {
+                head = nowy;
+            }
+            else
+            {
+
+
+                Wezel obecny = head;
+
+                while (obecny.nastepny != null)
+                {
+                    obecny = obecny.nastepny;
+                }
+
+                obecny.nastepny = nowy;
+                nowy.poprzedni = obecny;
+            }
+        }
+
+        public void usun(int wartosc)
+        {
+            Wezel obecny = head;
+
+            
+            while (obecny != null && obecny.wartosc != wartosc)
+            {
+                obecny = obecny.nastepny;
+            }
+
+            if (obecny == null)
+            {
+                return;
+            }
+
+
+            if (obecny.poprzedni != null)
+            {
+                obecny.poprzedni.nastepny = obecny.nastepny;
+
+            }
+            else
+            {
+                head = obecny.nastepny;
+            }
+
+
+            if (obecny.nastepny != null)
+            {
+                obecny.nastepny.poprzedni = obecny.poprzedni;
+            }
+
+        }
+
+        public string pobierzWynik()
+        {
+            String wynik = "";
+            Wezel obecny = head;
+
+            while(obecny != null)
+            {
+                wynik = wynik + obecny.wartosc + " ";
+                obecny = obecny.nastepny;
+            }
+
+            return wynik;
+        }
+    }
+}
+
+
+
+
