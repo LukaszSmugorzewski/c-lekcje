@@ -1,0 +1,200 @@
+============================================================form 1==================================================
+
+  namespace Drzewo_Binarne_1
+{
+    public partial class Form1 : Form
+    {
+
+        DrzewoBST drzewo = new DrzewoBST();
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            drzewo.dodaj(70);
+            drzewo.dodaj(3);
+            drzewo.dodaj(20);
+            drzewo.dodaj(50);
+            drzewo.dodaj(48);
+            drzewo.dodaj(10);
+            drzewo.dodaj(30);
+            drzewo.dodaj(6);
+
+            MessageBox.Show(drzewo.PobierzNapis1());
+
+            MessageBox.Show(drzewo.PobierzNapis2());
+
+            MessageBox.Show(drzewo.PobierzNapis3());
+
+        }
+    }
+}
+
+
+===================================================================WezelDrzewa==============================================
+
+
+  using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Drzewo_Binarne_1
+{
+    public class WezelDrzewa
+    {
+        public int wartosc;
+        public WezelDrzewa lewe;
+        public WezelDrzewa prawe;
+
+        public WezelDrzewa(int wartosc)
+        {
+            this.wartosc = wartosc;
+            this.lewe = null;
+            this.prawe = null;
+        }
+    }
+}
+
+
+===================================================DrzewoBST===============================================================
+
+
+  using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Drzewo_Binarne_1
+{
+    internal class DrzewoBST
+    {
+        public WezelDrzewa korzen;
+
+        public DrzewoBST()
+        {
+            this.korzen = null;
+        }
+
+        public void dodaj(int wartosc)
+        {
+            WezelDrzewa nowy = new WezelDrzewa(wartosc);
+
+            if (korzen == null)
+            {
+                korzen = nowy;
+            }
+            else
+               
+            {
+                WezelDrzewa obecny = korzen;
+
+                while (true)
+                {                    
+                    if (wartosc <= obecny.wartosc)
+                    {
+                        if (obecny.lewe == null)
+                        {
+                            obecny.lewe = nowy;
+                            break;
+                        }
+                        else
+                        {
+                            obecny = obecny.lewe;
+                        }
+                    }
+                    else if (wartosc > obecny.wartosc)
+                    {
+                        if(obecny.prawe == null)
+                        {
+                            obecny.prawe = nowy;
+                            break;
+                        }
+                        else
+                        {
+                            obecny = obecny.prawe;
+                        }
+                    }
+                }
+            }
+        }
+
+        public string PobierzNapis1()
+        {
+            return InOrder(korzen);
+        }
+
+        public string PobierzNapis2()
+        {
+            return PreOrder(korzen);
+        }
+
+        public string PobierzNapis3()
+        {
+            return PostOrder(korzen);
+        }
+
+
+
+        private string InOrder(WezelDrzewa rodzic)
+        {
+            if (rodzic == null)
+            {
+                return " ";
+            }
+
+            string wynik = "";
+
+            wynik += InOrder(rodzic.lewe);
+
+            wynik += rodzic.wartosc + " ";
+
+            wynik += InOrder(rodzic.prawe);
+
+            return wynik;
+        }
+
+        private string PreOrder(WezelDrzewa rodzic)
+        {
+            if (rodzic == null)
+            {
+                return " ";
+            }
+
+            string wynik = "";
+
+            wynik += rodzic.wartosc + " ";
+
+            wynik += PreOrder(rodzic.lewe);         
+
+            wynik += PreOrder(rodzic.prawe);
+
+            return wynik;
+        }
+
+        private string PostOrder(WezelDrzewa rodzic)
+        {
+            if (rodzic == null)
+            {
+                return " ";
+            }
+
+            string wynik = "";            
+
+            wynik += PostOrder(rodzic.lewe);
+
+            wynik += PostOrder(rodzic.prawe);
+
+            wynik += rodzic.wartosc + " ";
+
+            return wynik;
+        }
+    }
+}
+
+
+
