@@ -28,7 +28,7 @@
             {
                 MessageBox.Show("Wpisz poprawną liczbę");
             }
-            
+
 
         }
 
@@ -58,6 +58,7 @@
             label1.Text = "InOrder : " + drzewo.WypiszInorder();
             label2.Text = "PreOrder : " + drzewo.WypiszPreOrder();
             label3.Text = "PostOrder : " + drzewo.WypiszPostOrder();
+            label4.Text = "W szerz : " + drzewo.WypiszWSzerz();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -76,6 +77,11 @@
         }
 
         private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
         {
 
         }
@@ -285,9 +291,33 @@ namespace Drzewa_Binarne_2
             return rodzic.wartosc + " " + PreOrder(rodzic.lewe) + PreOrder(rodzic.prawe);
 
         }
+
+        public string WypiszWSzerz()
+        {
+            if (korzen == null)
+            {
+                return "";
+            }
+
+            string wynik = "";
+
+            Queue<WezelDrzewa> kolejka = new Queue<WezelDrzewa>();
+
+            kolejka.Enqueue(korzen);
+
+            while(kolejka.Count > 0)
+            {
+                WezelDrzewa obecny = kolejka.Dequeue();
+
+                wynik += obecny.wartosc + " ";
+
+                if (obecny.lewe != null) kolejka.Enqueue(obecny.lewe);
+                if (obecny.prawe != null) kolejka.Enqueue(obecny.prawe);
+            }
+            return wynik;
+        }
     }
 }
-
 
 
 
