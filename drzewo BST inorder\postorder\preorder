@@ -1,6 +1,6 @@
 ============================================================form 1==================================================
 
- namespace Drzewa_Binarne_2
+namespace Drzewa_binarne_3
 {
     public partial class Form1 : Form
     {
@@ -10,25 +10,33 @@
             InitializeComponent();
         }
 
+        private void odswiezWidok()
+        {
+            label1.Text = "Inorder: " + drzewo.NapiszInOrder();
+            label2.Text = "Preorder: " + drzewo.NapiszPreOrder();
+            label3.Text = "Postorder: " + drzewo.NapiszPostOrder();
+            label4.Text = "W szerz: " + drzewo.WypiszWSzerz();
+            label6.Text = "ZigZag: " + drzewo.ZigZag();
+            
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
                 int liczba = int.Parse(textBox1.Text);
 
-                drzewo.Dodaj(liczba);
+                drzewo.dodaj(liczba);
 
-                OdswiezWidok();
+                textBox1.Text = "";
 
-                textBox1.Text = " ";
-                textBox1.Focus();
+                odswiezWidok();
 
             }
             catch
             {
                 MessageBox.Show("Wpisz poprawną liczbę");
             }
-
 
         }
 
@@ -40,50 +48,15 @@
 
                 drzewo.usun(liczba);
 
-                OdswiezWidok();
+                textBox1.Text = "";
 
-                textBox1.Text = " ";
-                textBox1.Focus();
+                odswiezWidok();
 
             }
             catch
             {
                 MessageBox.Show("Wpisz poprawną liczbę");
             }
-        }
-
-
-        private void OdswiezWidok()
-        {
-            label1.Text = "InOrder : " + drzewo.WypiszInorder();
-            label2.Text = "PreOrder : " + drzewo.WypiszPreOrder();
-            label3.Text = "PostOrder : " + drzewo.WypiszPostOrder();
-            label4.Text = "W szerz : " + drzewo.WypiszWSzerz();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            drzewo.WypiszInorder();
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            drzewo.WypiszPostOrder();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
@@ -126,7 +99,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drzewa_Binarne_2
+namespace Drzewa_binarne_3
 {
     internal class DrzewaBST
     {
@@ -137,167 +110,139 @@ namespace Drzewa_Binarne_2
             this.korzen = null;
         }
 
-        public void Dodaj(int wartosc)
+        public void dodaj(int wartosc)
         {
             WezelDrzewa nowy = new WezelDrzewa(wartosc);
 
             if (korzen == null)
             {
                 korzen = nowy;
+                return;
             }
 
-            else
-            {
-                WezelDrzewa obecny = korzen;
+            WezelDrzewa obecny = korzen;
 
-                while (true)
+
+            while (true)
+            {
+                if (wartosc < obecny.wartosc)
                 {
-                    if (wartosc < obecny.wartosc)
+                    if (obecny.lewe == null)
                     {
-                        if (obecny.lewe == null)
-                        {
-                            obecny.lewe = nowy;
-                            break;
-                        }
-                        else
-                        {
-                            obecny = obecny.lewe;
-                        }
-                    }
-                    else if (wartosc > obecny.wartosc)
-                    {
-                        if (obecny.prawe == null)
-                        {
-                            obecny.prawe = nowy;
-                            break;
-                        }
-                        else
-                        {
-                            obecny = obecny.prawe;
-                        }
+                        obecny.lewe = nowy;
+                        break;
                     }
                     else
                     {
-                        return;
+                        obecny = obecny.lewe;
                     }
-
                 }
-
+                else if (wartosc > obecny.wartosc)
+                {
+                    if (obecny.prawe == null)
+                    {
+                        obecny.prawe = nowy;
+                        break;
+                    }
+                    else
+                    {
+                        obecny = obecny.prawe;
+                    }
+                }
+                else
+                {
+                    return;
+                }
             }
         }
 
-
         public void usun(int wartosc)
         {
-            korzen = UsunRekurencyjnie(korzen, wartosc);
+            korzen = usunRekurencyjnie(korzen, wartosc);
+
         }
 
         private int ZnajdzMin(WezelDrzewa wezel)
         {
-
             int min = wezel.wartosc;
 
-            while (wezel.lewe != null)
+            while(wezel.lewe != null)
             {
                 min = wezel.lewe.wartosc;
                 wezel = wezel.lewe;
             }
-            return min;
 
+            return min;
         }
 
-        private WezelDrzewa UsunRekurencyjnie(WezelDrzewa rodzic, int wartosc)
+        private WezelDrzewa usunRekurencyjnie(WezelDrzewa obecny, int wartosc)
         {
-            if (rodzic == null)
+            if (obecny == null) return null;
+
+            if(wartosc < obecny.wartosc)
             {
-                return null;
+                obecny.lewe = usunRekurencyjnie(obecny.lewe, wartosc);
+            }
+            else if (wartosc > obecny.wartosc)
+            {
+                obecny.prawe = usunRekurencyjnie(obecny.prawe, wartosc);
             }
 
-
-            if (wartosc < rodzic.wartosc) {
-                rodzic.lewe = UsunRekurencyjnie(rodzic.lewe, wartosc);
-            }
-            else if (wartosc > rodzic.wartosc)
-            {
-                rodzic.prawe = UsunRekurencyjnie(rodzic.prawe, wartosc);
-            }
             else
             {
-                if(rodzic.lewe == null && rodzic.prawe == null)
+                if(obecny.lewe == null)
                 {
-                     return null;
+                    return obecny.prawe;
                 }
-                if (rodzic.lewe == null)
+                if(obecny.prawe == null)
                 {
-                    return rodzic.prawe;
-                }
-                else if (rodzic.prawe == null)
-                {
-                    return rodzic.lewe;
-                }
-                else
-                {
-                    rodzic.wartosc = ZnajdzMin(rodzic.prawe);
-                    rodzic.prawe = UsunRekurencyjnie(rodzic.prawe, rodzic.wartosc);
+                    return obecny.lewe;
                 }
 
+                obecny.wartosc = ZnajdzMin(obecny.prawe);
 
+                obecny.prawe = usunRekurencyjnie(obecny.prawe, obecny.wartosc);
             }
-            return rodzic;
+
+            return obecny;
         }
 
-        public string WypiszInorder()
+        public string NapiszInOrder()
         {
             return InOrder(korzen);
         }
-
-        public string WypiszPostOrder()
+        public string NapiszPreOrder()
+        {
+            return PreOrder(korzen);
+        }
+        public string NapiszPostOrder()
         {
             return PostOrder(korzen);
         }
 
-        public string WypiszPreOrder()
-        {
-            return PreOrder(korzen);
-        }
-
         private string InOrder(WezelDrzewa rodzic)
         {
-            if (rodzic == null)
-            {
-                return "";
-            }
+            if (rodzic == null) return "";
 
             return InOrder(rodzic.lewe) + rodzic.wartosc + " " + InOrder(rodzic.prawe);
         }
 
-        private string PostOrder(WezelDrzewa rodzic)
-        {
-            if (rodzic == null)
-            {
-                return "";
-            }
-
-            return PostOrder(rodzic.lewe) + PostOrder(rodzic.prawe) +  rodzic.wartosc + " ";
-        }
-
         private string PreOrder(WezelDrzewa rodzic)
         {
-            if (rodzic == null)
-            {
-                return "";
-            }
+            if (rodzic == null) return "";
 
             return rodzic.wartosc + " " + PreOrder(rodzic.lewe) + PreOrder(rodzic.prawe);
-
         }
 
+        private string PostOrder(WezelDrzewa rodzic)
+        {
+            if (rodzic == null) return "";
+
+            return PostOrder(rodzic.lewe) + PostOrder(rodzic.prawe) + rodzic.wartosc + " ";
+        }
         public string WypiszWSzerz()
         {
-            if (korzen == null)
-            {
-                return "";
-            }
+            if (korzen == null) return "";
 
             string wynik = "";
 
@@ -305,15 +250,68 @@ namespace Drzewa_Binarne_2
 
             kolejka.Enqueue(korzen);
 
-            while(kolejka.Count > 0)
+            while (kolejka.Count > 0)
             {
                 WezelDrzewa obecny = kolejka.Dequeue();
 
                 wynik += obecny.wartosc + " ";
 
-                if (obecny.lewe != null) kolejka.Enqueue(obecny.lewe);
-                if (obecny.prawe != null) kolejka.Enqueue(obecny.prawe);
+
+                if (obecny.lewe != null)
+                {
+                    kolejka.Enqueue(obecny.lewe);
+                }
+                if (obecny.prawe != null)
+                {
+                    kolejka.Enqueue(obecny.prawe);
+                }
             }
+            return wynik;
+
+        }
+
+        public string ZigZag()
+        {
+            if (korzen == null) return "";
+
+            string wynik = "";
+
+            Queue<WezelDrzewa> kolejka = new Queue<WezelDrzewa>();
+
+            kolejka.Enqueue(korzen);
+
+            bool Odwrót = false;
+
+            while(kolejka.Count > 0)
+            {
+                int IleLiczb = kolejka.Count;
+
+                List<int> liczbyZPoziomu = new List<int>();
+
+                for(int i = 0; i < IleLiczb; i++)
+                {
+                    WezelDrzewa obecny = kolejka.Dequeue();
+
+                    liczbyZPoziomu.Add(obecny.wartosc);
+
+                    if (obecny.lewe != null) kolejka.Enqueue(obecny.lewe);
+                    if (obecny.prawe != null) kolejka.Enqueue(obecny.prawe);
+
+                }
+
+                if (Odwrót)
+                {
+                    liczbyZPoziomu.Reverse();
+                }
+
+                foreach (int liczba in liczbyZPoziomu)
+                {
+                    wynik += liczba + " ";
+                }
+
+                Odwrót = !Odwrót;
+            }
+
             return wynik;
         }
     }
