@@ -1,11 +1,10 @@
 ============================================================form 1==================================================
 
-  namespace Drzewo_Binarne_1
+ namespace Drzewa_Binarne_2
 {
     public partial class Form1 : Form
     {
-
-        DrzewoBST drzewo = new DrzewoBST();
+        DrzewaBST drzewo = new DrzewaBST();
         public Form1()
         {
             InitializeComponent();
@@ -13,24 +12,76 @@
 
         private void button1_Click(object sender, EventArgs e)
         {
-            drzewo.dodaj(70);
-            drzewo.dodaj(3);
-            drzewo.dodaj(20);
-            drzewo.dodaj(50);
-            drzewo.dodaj(48);
-            drzewo.dodaj(10);
-            drzewo.dodaj(30);
-            drzewo.dodaj(6);
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
 
-            MessageBox.Show(drzewo.PobierzNapis1());
+                drzewo.Dodaj(liczba);
 
-            MessageBox.Show(drzewo.PobierzNapis2());
+                OdswiezWidok();
 
-            MessageBox.Show(drzewo.PobierzNapis3());
+                textBox1.Text = " ";
+                textBox1.Focus();
+
+            }
+            catch
+            {
+                MessageBox.Show("Wpisz poprawną liczbę");
+            }
+            
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
+
+                drzewo.usun(liczba);
+
+                OdswiezWidok();
+
+                textBox1.Text = " ";
+                textBox1.Focus();
+
+            }
+            catch
+            {
+                MessageBox.Show("Wpisz poprawną liczbę");
+            }
+        }
+
+
+        private void OdswiezWidok()
+        {
+            label1.Text = "InOrder : " + drzewo.WypiszInorder();
+            label2.Text = "PreOrder : " + drzewo.WypiszPreOrder();
+            label3.Text = "PostOrder : " + drzewo.WypiszPostOrder();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            drzewo.WypiszInorder();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            drzewo.WypiszPostOrder();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
 
         }
     }
 }
+
 
 
 ===================================================================WezelDrzewa==============================================
@@ -63,24 +114,24 @@ namespace Drzewo_Binarne_1
 ===================================================DrzewoBST===============================================================
 
 
-  using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Drzewo_Binarne_1
+namespace Drzewa_Binarne_2
 {
-    internal class DrzewoBST
+    internal class DrzewaBST
     {
         public WezelDrzewa korzen;
 
-        public DrzewoBST()
+        public DrzewaBST()
         {
             this.korzen = null;
         }
 
-        public void dodaj(int wartosc)
+        public void Dodaj(int wartosc)
         {
             WezelDrzewa nowy = new WezelDrzewa(wartosc);
 
@@ -88,14 +139,14 @@ namespace Drzewo_Binarne_1
             {
                 korzen = nowy;
             }
+
             else
-               
             {
                 WezelDrzewa obecny = korzen;
 
                 while (true)
-                {                    
-                    if (wartosc <= obecny.wartosc)
+                {
+                    if (wartosc < obecny.wartosc)
                     {
                         if (obecny.lewe == null)
                         {
@@ -109,7 +160,7 @@ namespace Drzewo_Binarne_1
                     }
                     else if (wartosc > obecny.wartosc)
                     {
-                        if(obecny.prawe == null)
+                        if (obecny.prawe == null)
                         {
                             obecny.prawe = nowy;
                             break;
@@ -119,82 +170,124 @@ namespace Drzewo_Binarne_1
                             obecny = obecny.prawe;
                         }
                     }
+                    else
+                    {
+                        return;
+                    }
+
                 }
+
             }
         }
 
-        public string PobierzNapis1()
+
+        public void usun(int wartosc)
+        {
+            korzen = UsunRekurencyjnie(korzen, wartosc);
+        }
+
+        private int ZnajdzMin(WezelDrzewa wezel)
+        {
+
+            int min = wezel.wartosc;
+
+            while (wezel.lewe != null)
+            {
+                min = wezel.lewe.wartosc;
+                wezel = wezel.lewe;
+            }
+            return min;
+
+        }
+
+        private WezelDrzewa UsunRekurencyjnie(WezelDrzewa rodzic, int wartosc)
+        {
+            if (rodzic == null)
+            {
+                return null;
+            }
+
+
+            if (wartosc < rodzic.wartosc) {
+                rodzic.lewe = UsunRekurencyjnie(rodzic.lewe, wartosc);
+            }
+            else if (wartosc > rodzic.wartosc)
+            {
+                rodzic.prawe = UsunRekurencyjnie(rodzic.prawe, wartosc);
+            }
+            else
+            {
+                if(rodzic.lewe == null && rodzic.prawe == null)
+                {
+                     return null;
+                }
+                if (rodzic.lewe == null)
+                {
+                    return rodzic.prawe;
+                }
+                else if (rodzic.prawe == null)
+                {
+                    return rodzic.lewe;
+                }
+                else
+                {
+                    rodzic.wartosc = ZnajdzMin(rodzic.prawe);
+                    rodzic.prawe = UsunRekurencyjnie(rodzic.prawe, rodzic.wartosc);
+                }
+
+
+            }
+            return rodzic;
+        }
+
+        public string WypiszInorder()
         {
             return InOrder(korzen);
         }
 
-        public string PobierzNapis2()
-        {
-            return PreOrder(korzen);
-        }
-
-        public string PobierzNapis3()
+        public string WypiszPostOrder()
         {
             return PostOrder(korzen);
         }
 
-
+        public string WypiszPreOrder()
+        {
+            return PreOrder(korzen);
+        }
 
         private string InOrder(WezelDrzewa rodzic)
         {
             if (rodzic == null)
             {
-                return " ";
+                return "";
             }
 
-            string wynik = "";
-
-            wynik += InOrder(rodzic.lewe);
-
-            wynik += rodzic.wartosc + " ";
-
-            wynik += InOrder(rodzic.prawe);
-
-            return wynik;
-        }
-
-        private string PreOrder(WezelDrzewa rodzic)
-        {
-            if (rodzic == null)
-            {
-                return " ";
-            }
-
-            string wynik = "";
-
-            wynik += rodzic.wartosc + " ";
-
-            wynik += PreOrder(rodzic.lewe);         
-
-            wynik += PreOrder(rodzic.prawe);
-
-            return wynik;
+            return InOrder(rodzic.lewe) + rodzic.wartosc + " " + InOrder(rodzic.prawe);
         }
 
         private string PostOrder(WezelDrzewa rodzic)
         {
             if (rodzic == null)
             {
-                return " ";
+                return "";
             }
 
-            string wynik = "";            
+            return PostOrder(rodzic.lewe) + PostOrder(rodzic.prawe) +  rodzic.wartosc + " ";
+        }
 
-            wynik += PostOrder(rodzic.lewe);
+        private string PreOrder(WezelDrzewa rodzic)
+        {
+            if (rodzic == null)
+            {
+                return "";
+            }
 
-            wynik += PostOrder(rodzic.prawe);
+            return rodzic.wartosc + " " + PreOrder(rodzic.lewe) + PreOrder(rodzic.prawe);
 
-            wynik += rodzic.wartosc + " ";
-
-            return wynik;
         }
     }
 }
+
 
 
 
