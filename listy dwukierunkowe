@@ -1,15 +1,15 @@
 ==========================================================================form 1============================================================
 
-namespace listy_dwukierunkowe_3
+namespace Listy_dwukierunkowe_4
 {
     public partial class Form1 : Form
     {
+        ListaDwukierunkowa lista = new ListaDwukierunkowa();
+
         public Form1()
         {
             InitializeComponent();
         }
-
-        ListaDwukierunkowa lista = new ListaDwukierunkowa();
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -17,21 +17,83 @@ namespace listy_dwukierunkowe_3
             {
                 int liczba = int.Parse(textBox1.Text);
 
-                lista.dodaj(liczba);
+                lista.DodajNaKoniec(liczba);
 
                 textBox1.Text = " ";
 
-                OdswiezWidok();
+                label1.Text = "lista: " + lista.pobierzWynik();
 
             }
             catch
             {
-                MessageBox.Show("Wpisz poprawną liczbę");
+                MessageBox.Show("Podaj poprawną liczbę");
             }
 
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
+                int przed = int.Parse(textBox2.Text);
+
+                lista.DodajPrzed(liczba, przed);
+
+                textBox1.Text = " ";
+                textBox2.Text = " ";
+
+                label1.Text = "lista: " + lista.pobierzWynik();
+
+            }
+            catch
+            {
+                MessageBox.Show("Podaj poprawną liczbę");
+            }
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
+                int przed = int.Parse(textBox2.Text);
+
+                lista.DodajPo(liczba, przed);
+
+                textBox1.Text = " ";
+                textBox2.Text = " ";
+
+                label1.Text = "lista: " + lista.pobierzWynik();
+
+            }
+            catch
+            {
+                MessageBox.Show("Podaj poprawną liczbę");
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int liczba = int.Parse(textBox1.Text);
+
+                lista.DodajGlowe(liczba);
+
+                textBox1.Text = " ";
+
+                label1.Text = "lista: " + lista.pobierzWynik();
+
+            }
+            catch
+            {
+                MessageBox.Show("Podaj poprawną liczbę");
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
         {
             try
             {
@@ -41,20 +103,17 @@ namespace listy_dwukierunkowe_3
 
                 textBox1.Text = " ";
 
-                OdswiezWidok();
+                label1.Text = "lista: " + lista.pobierzWynik();
+
             }
             catch
             {
-                MessageBox.Show("wpisz poprawną liczbę");
+                MessageBox.Show("Podaj poprawną liczbę");
             }
-        }
-
-        private void OdswiezWidok()
-        {
-            label2.Text = "Lista: " + lista.pobierzWynik();
         }
     }
 }
+
 
 
 
@@ -96,47 +155,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace listy_dwukierunkowe_3
+namespace Listy_dwukierunkowe_4
 {
-    internal class ListaDwukierunkowa
+    public class ListaDwukierunkowa
     {
-        public Wezel head;
+        public Wezel glowa;
 
         public ListaDwukierunkowa()
         {
-            this.head = null;
+            this.glowa = null;
         }
 
-
-        public void dodaj(int wartosc)
+        public void DodajNaKoniec(int wartosc)
         {
             Wezel nowy = new Wezel(wartosc);
 
-            if (head == null)
+            if (glowa == null)
             {
-                head = nowy;
+                glowa = nowy;
             }
             else
             {
+                Wezel obecny = glowa;
 
-
-                Wezel obecny = head;
-
-                while (obecny.nastepny != null)
+                while(obecny.nastepny != null)
                 {
                     obecny = obecny.nastepny;
                 }
-
                 obecny.nastepny = nowy;
                 nowy.poprzedni = obecny;
             }
         }
 
-        public void DodajPrzed(int szukana, int wartosc)
+        public void DodajPrzed(int wartosc, int szukana)
         {
             Wezel nowy = new Wezel(wartosc);
 
-            Wezel obecny = head;
+            Wezel obecny = glowa;
 
             while(obecny != null && obecny.wartosc != szukana)
             {
@@ -148,33 +203,34 @@ namespace listy_dwukierunkowe_3
             }
             else
             {
-
-                if (obecny == head)
+                if(obecny == glowa)
                 {
-                    nowy.nastepny = head;
-                    head.poprzedni = nowy;
-                    head = nowy;
+                    nowy.nastepny = glowa;
+                    glowa.poprzedni = nowy;
+                    glowa = nowy;
                 }
                 else
                 {
                     nowy.nastepny = obecny;
                     nowy.poprzedni = obecny.poprzedni;
 
-                    obecny.poprzedni.nastepny = nowy;
+                    if (nowy.poprzedni != null)
+                    {
+                        nowy.poprzedni.nastepny = nowy;
+                    }
+
                     obecny.poprzedni = nowy;
                 }
             }
-
         }
 
-
-        public void DodajPo(int szukana, int wartosc)
+        public void DodajPo(int wartosc, int szukana)
         {
             Wezel nowy = new Wezel(wartosc);
 
-            Wezel obecny = head;
+            Wezel obecny = glowa;
 
-            while (obecny != null && obecny.wartosc != szukana)
+            while(obecny != null && obecny.wartosc != szukana)
             {
                 obecny = obecny.nastepny;
             }
@@ -192,64 +248,56 @@ namespace listy_dwukierunkowe_3
             }
 
             obecny.nastepny = nowy;
-                
         }
-
 
         public void DodajGlowe(int wartosc)
         {
             Wezel nowy = new Wezel(wartosc);
-            if (head != null)
+            if(glowa != null)
             {
-                head.poprzedni = nowy;
-                nowy.nastepny = head;
-                head = nowy;
+                glowa.poprzedni = nowy;
+                nowy.nastepny = glowa;
+                glowa = nowy;
             }
             else
             {
-                head = nowy;
+                glowa = nowy;
             }
-
         }
 
         public void usun(int wartosc)
         {
-            Wezel obecny = head;
+            Wezel obecny = glowa;
 
-            
-            while (obecny != null && obecny.wartosc != wartosc)
+            while(obecny != null && obecny.wartosc != wartosc)
             {
                 obecny = obecny.nastepny;
             }
 
-            if (obecny == null)
+            if(obecny == null)
             {
                 return;
             }
 
-
             if (obecny.poprzedni != null)
             {
                 obecny.poprzedni.nastepny = obecny.nastepny;
-
             }
             else
             {
-                head = obecny.nastepny;
+                glowa = obecny.nastepny;
             }
 
-
-            if (obecny.nastepny != null)
+            if(obecny.nastepny != null)
             {
                 obecny.nastepny.poprzedni = obecny.poprzedni;
             }
-
         }
 
         public string pobierzWynik()
         {
-            String wynik = "";
-            Wezel obecny = head;
+            string wynik = "";
+            Wezel obecny = glowa;
 
             while(obecny != null)
             {
