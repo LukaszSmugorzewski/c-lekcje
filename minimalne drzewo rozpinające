@@ -85,15 +85,14 @@ namespace MST
         public int koniec;
         public int waga;
 
-        public KrawedzKruskala(int waga, int koniec, int poczatek)
+        public KrawedzKruskala(int poczatek, int koniec, int waga)
         {
-            this.waga = waga;
-            this.koniec = koniec;
             this.poczatek = poczatek;
+            this.koniec = koniec;
+            this.waga = waga;
         }
     }
 }
-
 
 =====================================================================kreawdz==============================================
 using System;
